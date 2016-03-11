@@ -3,7 +3,7 @@
 First, build and install the gem locally.
 
     $ gem build warp_whistle-api_key.gemspec
-    $ gem install warp_whistle-api_key-0.0.0.gemspec
+    $ gem install ./warp_whistle-api_key-0.0.0.gem
 
 Then, include the gem into your project's GemFile
 
