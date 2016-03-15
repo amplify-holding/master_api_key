@@ -1,17 +1,9 @@
+require 'active_support'
+
 module WarpWhistle
   module Components
     module ApiGatekeeper
       extend ActiveSupport::Concern
-
-      module ClassMethods
-        def authorize(options = {})
-          before_action(options) do
-            authorize_action do
-
-            end
-          end
-        end
-      end
 
       protected
 
@@ -19,8 +11,16 @@ module WarpWhistle
         if user_authenticated?
           yield
         else
-          respond_with_specified_error('Sorry!! You are not authorized!', :unauthorized)
+          on_authentication_failure
         end
+      end
+
+      def on_authentication_failure
+        head(:unauthorized)
+      end
+
+      def on_forbidden_request
+        head(:forbidden)
       end
 
       private

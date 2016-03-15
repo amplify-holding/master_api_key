@@ -11,4 +11,5 @@ Gem::Specification.new do |s|
       'http://rubygems.org/gems/warp_whistle-api_key'
   s.license       = 'MIT'
   s.add_dependency('rails', '>= 3.0.0')
+  s.add_development_dependency('rspec', '~> 3.4')
 end

@@ -14,3 +14,5 @@ target
 .settings/org.eclipse.m2e.core.prefs
 *.gem
 .java-version
+bin
+Gemfile.lock
