@@ -1,10 +1,10 @@
 require 'action_controller/metal/head'
-require 'warp_whistle/components/api_gatekeeper'
-require 'warp_whistle/support/api_key'
+require 'security/api_gatekeeper'
+require 'support/api_key'
 
-describe WarpWhistle::Components::ApiGatekeeper, 'Basic Authorization' do
+describe Security::ApiGatekeeper, 'Basic Authorization' do
   class BasicController
-    include WarpWhistle::Components::ApiGatekeeper
+    include Security::ApiGatekeeper
     include ActionController::Head
 
     def index
@@ -51,14 +51,14 @@ describe WarpWhistle::Components::ApiGatekeeper, 'Basic Authorization' do
     end
 
     it "should return 401 (:unauthorized) if the token can't be authenticated" do
-      expect(ApiKey).to receive(:exists?).with(access_token: @api_token).and_return(false)
+      expect(ApiKey).to receive(:exists?).with(api_token: @api_token).and_return(false)
       expect(@controller).to receive(:on_authentication_failure)
 
       @controller.index
     end
 
     it "should return 403 (:forbidden) if the api token isn't authorized to access the group" do
-      expect(ApiKey).to receive(:exists?).with(access_token: @api_token).and_return(true)
+      expect(ApiKey).to receive(:exists?).with(api_token: @api_token).and_return(true)
       expect(@controller).to receive(:on_forbidden_request).and_call_original
       expect(@controller).to receive(:head).with(:forbidden)
 
@@ -66,7 +66,7 @@ describe WarpWhistle::Components::ApiGatekeeper, 'Basic Authorization' do
     end
 
     it 'should return 200 if the token is authenticated and authorized to access the controller' do
-      expect(ApiKey).to receive(:exists?).with(access_token: @api_token).and_return(true)
+      expect(ApiKey).to receive(:exists?).with(api_token: @api_token).and_return(true)
       expect(@controller).to receive(:head).with(:ok)
 
       @controller.index

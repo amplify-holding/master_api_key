@@ -6,5 +6,5 @@ class AddApiKeys < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :api_keys, :api_token, unique: true
-end
+  end
 end

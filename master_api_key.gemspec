@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'warp_whistle-api_key'
+  s.name        = 'master_api_key'
   s.version     = '0.0.0'
   s.date        = '2016-03-09'
   s.summary     = 'Secure Access of API with API Keys.'
@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = ['fjones@amplify.com', 'pvadrevu@amplify.com', 'sgurram@amplify.com ']
   s.files       = Dir['{lib}/**/*.rb', 'README.md']
   s.homepage    =
-      'http://rubygems.org/gems/warp_whistle-api_key'
+      'http://rubygems.org/gems/master_api_key'
   s.license       = 'MIT'
   s.add_dependency('rails', '>= 3.0.0')
   s.add_development_dependency('rspec', '~> 3.4')
