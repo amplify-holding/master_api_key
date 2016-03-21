@@ -1,0 +1,23 @@
+base: &base
+  adapter: mysql
+  encoding: utf8
+  host: <%= 'localhost' %>
+  username: <%= 'root' %>
+  password: <%= '' %>
+  pool: <%= ('20').to_i %>
+  checkout_timeout: 20
+
+development: &development
+  <<: *base
+  database: api_authenticator
+
+test:
+  <<: *base
+  database: api_authenticator_test
+
+production: &production
+  <<: *base
+  database: <%= 'api_authenticator_development' %>
+
+cucumber:
+  <<: *development
