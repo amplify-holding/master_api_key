@@ -1,7 +1,7 @@
 class AdminController < ApplicationController
 
   skip_before_action  :verify_authenticity_token
-  before_filter :authorize_action_filter, only: [:create]
+  before_action :authorize_action, only: [:create]
 
   def index
     success_message

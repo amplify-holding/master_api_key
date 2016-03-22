@@ -6,15 +6,9 @@ module Security
 
     protected
 
-    def authorize_action_filter
-      unless user_authenticated?
-        on_authentication_failure
-      end
-    end
-
     def authorize_action
       if user_authenticated?
-        yield
+        yield if block_given?
       else
         on_authentication_failure
       end
