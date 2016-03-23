@@ -1,4 +1,16 @@
-# Using Master Api Key
+# Description #
+
+The Master Api Key gem allows you to easily integrate API access restrictions into your services.
+This gem will provide an API to create API Keys and revoke API access. 
+
+In addition, it provides basic authorization with controller groups. With controller groups,
+you can seperate your APIs into logical packages or products. 
+
+For example, you can have an AdminController and UserController under the "Users" group or
+a MapsControllers, LocationsController, TrafficController under the "Maps" group. 
+This allows you to only give access to related controllers to a client easily.
+
+# Using Master Api Key #
 ## Setup ##
 
 First, include the gem into your project's GemFile
