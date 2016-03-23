@@ -15,14 +15,22 @@ Then, generate the record, controller, and migrate the table
 ###Generating an API key to Grant Access###
 ---
 ####Description####
+This endpoint is for generating new API keys. Ensure that you keep track of who 
+you've given access to the key. That way if you ever need to revoke the key, you'll
+know who to contact to prevent outages for your clients.
 
 ####Endpoint####
+
     POST /api_key
+    
 ####Parameters####
+
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
 | group      | string | no | the name of a collection of controllers to grand access. Not providing a group will grant access to all public APIs |
+
 ####Responses####
+
 | Response Code | Description |
 | ------------- |------------ |
 | 201           | Created     |
@@ -41,14 +49,21 @@ Then, generate the record, controller, and migrate the table
 ###Deleting an API Key by Record Id###
 ---
 ####Description####
+
     Revokes access for anyone using the associated api key
+    
 ####Endpoint####
+
     DELETE /api_key/:id
+    
 ####Parameters####
+
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
 | id      | int | yes | An integer representing the record id within the database |
+
 ####Responses####
+
 | Response Code | Description  |
 | ------------- |------------- |
 | 200 | Success |
@@ -63,14 +78,21 @@ Then, generate the record, controller, and migrate the table
 ###Deleting an API Key by Access Token###
 ---
 ####Description####
+
     Revokes access for anyone using the associated api key
+    
 ####Endpoint####
+
     DELETE /api_key
+    
 ####Parameters####
+
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
 | access_token      | string | yes | A string associated with the access token of an API Key |
+
 ####Responses####
+
 | Response Code | Description  |
 | ------------- |------------- |
 | 200 | Success |
