@@ -1,7 +1,7 @@
 require 'security/api_gatekeeper'
 
-class MasterApiKey
-  def self.hi
-    puts 'Hello world!'
-  end
+module MasterApiKey
+
 end
+
+ActionController::Base.send :include, Security::ApiGatekeeper
