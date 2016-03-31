@@ -1,0 +1,23 @@
+base: &base
+  adapter: mysql
+  encoding: utf8
+  host: <%= 'localhost' %>
+  username: <%= 'root' %>
+  password: <%= '' %>
+  pool: <%= ('20').to_i %>
+  checkout_timeout: 20
+
+development: &development
+  <<: *base
+  database: master_api_key
+
+test:
+  <<: *base
+  database: master_api_key_test
+
+production: &production
+  <<: *base
+  database: <%= 'master_api_key_development' %>
+
+cucumber:
+  <<: *development

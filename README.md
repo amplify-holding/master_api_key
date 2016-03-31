@@ -4,7 +4,7 @@ The Master Api Key gem allows you to easily integrate API access restrictions in
 This gem will provide an API to create API Keys and revoke API access. 
 
 In addition, it provides basic authorization with controller groups. With controller groups,
-you can seperate your APIs into logical packages or products. 
+you can separate your APIs into logical packages or products. 
 
 For example, you can have an AdminController and UserController under the "Users" group or
 a MapsControllers, LocationsController, TrafficController under the "Maps" group. 
@@ -148,7 +148,7 @@ calling the method to restrict access.
 #Restricting access by filters
 before_action :authorize_action, only: [:create]
 
-#Restricting access by explicting calling method.
+#Restricting access by explicitly calling method.
 #If the call is authorized then the code block passed in will be executed.
 def index
     authorize_action do
@@ -177,7 +177,7 @@ in your calling controller.
 ## Workstation Setup ##
 
 ### Database Setup ###
-To create the necessesary databases, do the following:
+To create the necessary databases, do the following:
 
     $ mysql -u root   
 ```sql
