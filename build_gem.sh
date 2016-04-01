@@ -57,23 +57,3 @@ rake spec
 echo "Building and Installing gem"
 gem build master_api_key.gemspec
 gem install ./master_api_key-$GEM_VERSION.gem
-
-cd examples/rails-api-authenticator
-
-echo "Updating dependent gems for example app"
-
-if [ ${FORCE_UPDATE} == true ]; then
-  bundle update
-else
-  bundle install
-  bundle update master_api_key --local
-fi
-
-echo "Generating api key scaffolding and running migrations"
-
-rails generate master_api_key:active_record
-rake db:migrate
-
-echo "Running integration tests"
-
-rake spec

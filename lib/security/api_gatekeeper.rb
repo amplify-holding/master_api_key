@@ -25,7 +25,7 @@ module Security
     private
 
     def user_authenticated?
-      api_token.present? and ApiKey.exists?(api_token: api_token)
+      api_token.present? and MasterApiKey::ApiKey.exists?(api_token: api_token)
     end
 
     def api_token
