@@ -29,7 +29,9 @@ Finally, setup the MasterApiKey Engine routes.
       mount MasterApiKey::Engine => '/security'
     ``` 
 
-You can replace the mounted path from 'security' to any sub path you'd like.
+You can replace the mounted path from 'security' to any sub path you'd like. 
+For more info on rails engines, please go to the follwing link:
+[Rails Engine Tutorial](http://guides.rubyonrails.org/engines.html)
 
 ## Using the API ##
  
