@@ -15,12 +15,21 @@ This allows you to only give access to related controllers to a client easily.
 
 First, include the gem into your project's GemFile
 
-    $ gem 'master_api_key', ~> 0.0.3
+    $ gem 'master_api_key', ~> 0.1
 
-Then, generate the record, controller, and migrate the table
+Then, install and run the migrations
 
-    $ rails generate master_api_key:active_record
+    $ rake master_api_key:install:migrations
     $ rake db:migrate
+    
+Finally, setup the MasterApiKey Engine routes. 
+* Go to the routes.rb file in your application
+* Add the following line.
+    ```ruby
+      mount MasterApiKey::Engine => '/security'
+    ``` 
+
+You can replace the mounted path from 'security' to any sub path you'd like.
 
 ## Using the API ##
  
@@ -33,7 +42,7 @@ know who to contact to prevent outages for your clients.
 
 ####Endpoint####
 
-    POST /api_key
+    POST /security/api_key
     
 ####Parameters####
 
@@ -52,7 +61,7 @@ know who to contact to prevent outages for your clients.
     {
         "apiKey":{
                     "id":1,
-                    "access_token":"h7Uty6gPo5eYyA3VQPd-4w",
+                    "api_token":"h7Uty6gPo5eYyA3VQPd-4w",
                     "group":"hello"
                  },
         "status":"created"
@@ -66,7 +75,7 @@ know who to contact to prevent outages for your clients.
     
 ####Endpoint####
 
-    DELETE /api_key/:id
+    DELETE /security/api_key/:id
     
 ####Parameters####
 
@@ -95,13 +104,13 @@ know who to contact to prevent outages for your clients.
     
 ####Endpoint####
 
-    DELETE /api_key
+    DELETE /security/api_key
     
 ####Parameters####
 
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
-| access_token      | string | yes | A string associated with the access token of an API Key |
+| api_token      | string | yes | A string associated with the access token of an API Key |
 
 ####Responses####
 
@@ -121,7 +130,7 @@ know who to contact to prevent outages for your clients.
 When retricting access to your APIs, a new header field in your http request will be required.
 The header key/value is:
 
-    X-API-TOKEN: <access_token>
+    X-API-TOKEN: <api_token>
 
 If the access token is within the api_keys table and has been authorized to access the controller,
 then the user will be allowed to access you endpoint.
@@ -190,12 +199,8 @@ Just delete the databases and recreate them.
 ### Building the Gem ###
 Use the build gem script if you want a simple way to setup your workstation for development.
 The script goes through several steps before verifting the build.
-1. The RSpec unit tests are run against master_api_key
+1. The RSpec unit and integration tests are run against master_api_key
 2. The gem is built and installed in the current ruby environment
-3. Scaffolding for the rails-api-authenticator example app are generated
-...(Please Note) If the scaffolding already exists, it will not override them.
-...This is default rails behavior.
-4. The Rspec integration tests are run within the example app.
 
 Once all tests are green, then it should be safe to push the gem to the repository. 
 
