@@ -6,11 +6,14 @@ module Security
 
     module ClassMethods
       def belongs_to_api_group(group_name)
-
         raise ArgumentError, "MasterApiKey: Didn't define an api group name" unless group_name.present?
 
         self.module_eval("def api_group() :#{group_name} end")
       end
+    end
+
+    def api_group
+      nil
     end
 
     protected

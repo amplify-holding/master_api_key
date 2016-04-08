@@ -52,6 +52,8 @@ else
   bundle install
 fi
 
+set -e
+
 rake spec
 
 echo "Building and Installing gem"
