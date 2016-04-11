@@ -2,7 +2,9 @@ require_dependency 'master_api_key/application_controller'
 
 module MasterApiKey
   class ApiKeysController < ApplicationController
+    belongs_to_api_group :master_key
     skip_before_action  :verify_authenticity_token
+    before_action :authorize_action
 
     # POST /api_keys
     def create
