@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.homepage    =
       'http://rubygems.org/gems/master_api_key'
   s.license       = 'MIT'
-  s.add_dependency('rails', '>= 3.0.0')
+  s.add_dependency('rails', ['>= 4.0', '< 5.0'])
   s.add_development_dependency('rspec', '~> 3.4')
-  s.add_development_dependency 'rspec-rails'
-  s.add_development_dependency 'activerecord-jdbcmysql-adapter'
+  s.add_development_dependency('rspec-rails', '~> 3.4')
+  s.add_development_dependency('activerecord-jdbcmysql-adapter', '~> 1.3')
 end
