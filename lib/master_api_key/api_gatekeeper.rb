@@ -1,6 +1,6 @@
 require 'active_support'
 
-module Security
+module MasterApiKey
   module ApiGatekeeper
     extend ActiveSupport::Concern
 

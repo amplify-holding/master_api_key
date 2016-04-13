@@ -183,7 +183,7 @@ If the access token was authenticated but was not authorized to use the endpoint
 
 ### Integrating Master Api Key into your Controllers ###
 
-The core module of this project is "Security::ApiGatekeeper", which has the logic to validate the Api Tokens used to call the APIs.
+The core module of this project is "MasterApiKey::ApiGatekeeper", which has the logic to validate the Api Tokens used to call the APIs.
 The method to restrict access is by either adding a filter to the top of the controller or explicitly
 calling the method to restrict access.
 
@@ -218,17 +218,6 @@ in your calling controller.
 # Developing For the Gem #
 
 ## Workstation Setup ##
-
-### Database Setup ###
-To create the necessary databases, do the following:
-
-    $ mysql -u root   
-```sql
-CREATE DATABASE api_authenticator;
-CREATE DATABASE api_authenticator_test;
-```
-If you are making record changes and need to reset the database. 
-Just delete the databases and recreate them.
 
 ### Building the Gem ###
 Use the build gem script if you want a simple way to setup your workstation for development.

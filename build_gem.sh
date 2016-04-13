@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GEM_VERSION=$(<master_api_key.gemversion)
+GEM_VERSION=$(<config/master_api_key.gemversion)
 FORCE_UPDATE=false
 
 yellow=`tput setaf 3`

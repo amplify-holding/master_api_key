@@ -50,10 +50,5 @@ module MasterApiKey
     def access_id_param
       params.require(:id)
     end
-
-    # Only allow a trusted parameter "white list" through.
-      # def api_key_params
-      #   params.require(:api_key).permit(:api_token)
-      # end
   end
 end

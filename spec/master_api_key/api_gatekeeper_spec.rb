@@ -1,10 +1,9 @@
 require 'rails_helper'
-require 'security/api_gatekeeper'
+require 'master_api_key/api_gatekeeper'
 
 RSpec.describe ApplicationController, :type => :controller do
   context 'with fully configured controller' do
     controller do
-      include Security::ApiGatekeeper
       belongs_to_api_group(:allowed_group)
 
       def index
@@ -73,7 +72,6 @@ RSpec.describe ApplicationController, :type => :controller do
 
   context 'with a controller without a group configured' do
     controller do
-      include Security::ApiGatekeeper
 
       def index
         authorize_action do
