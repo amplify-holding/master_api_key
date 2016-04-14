@@ -3,13 +3,15 @@ require_dependency 'master_api_key/application_controller'
 module MasterApiKey
   class ApiKeysController < ApplicationController
     belongs_to_api_group :master_key
-    skip_before_action  :verify_authenticity_token
-    before_action :authorize_action
+    skip_before_filter  :verify_authenticity_token
+    before_filter :authorize_action
 
     # POST /api_keys
     def create
       begin
-        @api_key = ApiKey.create!(group:group_param)
+        @api_key = ApiKey.create! do |api_key|
+          api_key.group = group_param
+        end
         render json: { apiKey: @api_key, status: :created }
       rescue ActionController::ParameterMissing => e
         respond_with_error(e.message, :bad_request)

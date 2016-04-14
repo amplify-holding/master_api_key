@@ -6,5 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 unless MasterApiKey::ApiKey.where(:group => :master_key).count > 0
-  MasterApiKey::ApiKey.create(:group => :master_key)
+  MasterApiKey::ApiKey.create do |master_key|
+    master_key.group = :master_key
+  end
 end

@@ -25,22 +25,29 @@ Then, install and run the migrations
     $ rake db:migrate
     
 Next, add the following line to the seed file for integrating MasterApiKey seed data.
-    ```ruby
-          MasterApiKey::Engine.load_seed
-    ``` 
+```ruby
+     MasterApiKey::Engine.load_seed
+``` 
     
 Finally, setup the MasterApiKey Engine routes. 
 * Go to the routes.rb file in your application
 * Add the following line.
-    ```ruby
-      mount MasterApiKey::Engine => '/security'
-    ``` 
+```ruby
+    mount MasterApiKey::Engine => '/security'
+``` 
 
 You can replace the mounted path from 'security' to any sub path you'd like. In addition, running a db
 migration should automatically generate a master_key APIKey for you.
 
 For more info on rails engines, please go to the following link:
 [Rails Engine Tutorial](http://guides.rubyonrails.org/engines.html)
+
+### Rails 3 Integration ###
+To use this gem with rails 3, you'll need the strong parameters gem. 
+
+```ruby
+    gem 'strong_parameters'
+```
 
 ## Managing the API Keys ##
  
