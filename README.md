@@ -3,11 +3,13 @@
 The Master Api Key gem allows you to easily integrate API access restrictions into your services.
 This gem will provide an API to create API Keys and revoke API access. 
 
+##API Groups##
+
 In addition, it provides basic authorization with controller groups. With controller groups,
 you can separate your APIs into logical packages or products. 
 
-For example, you can have an AdminController and UserController under the "Users" group or
-a MapsControllers, LocationsController, TrafficController under the "Maps" group. 
+For example, you can have an AdminController and UserController under the "users" group or
+a MapsControllers, LocationsController, TrafficController under the "maps" group. 
 This allows you to only give access to related controllers to a client easily.
 
 # Using Master Api Key #
@@ -15,7 +17,7 @@ This allows you to only give access to related controllers to a client easily.
 
 First, include the gem into your project's GemFile
 
-    $ gem 'master_api_key', ~> 0.3.0
+    $ gem 'master_api_key', ~> 1.0
 
 Then, install and run the migrations
 
@@ -40,7 +42,7 @@ migration should automatically generate a master_key APIKey for you.
 For more info on rails engines, please go to the following link:
 [Rails Engine Tutorial](http://guides.rubyonrails.org/engines.html)
 
-## Using the API ##
+## Managing the API Keys ##
  
 ###Generating an API key to Grant Access###
 ---
@@ -70,7 +72,7 @@ to giving them complete access to your API and control who accesses it.
 
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
-| group      | string | no | the name of a collection of controllers to grand access. Not providing a group will grant access to all public APIs |
+| group      | string | no | the name of a collection of controllers to grant access. Not providing a group will grant access to all public APIs |
 
 ####Responses####
 
@@ -84,7 +86,7 @@ to giving them complete access to your API and control who accesses it.
         "apiKey":{
                     "id":1,
                     "api_token":"h7Uty6gPo5eYyA3VQPd-4w",
-                    "group":"hello"
+                    "group":"messaging"
                  },
         "status":"created"
     }
@@ -215,11 +217,7 @@ in your calling controller.
     end
 ```
 
-# Developing For the Gem #
-
-## Workstation Setup ##
-
-### Building the Gem ###
+# Building the Gem #
 Use the build gem script if you want a simple way to setup your workstation for development.
 The script goes through several steps before verifting the build.
 1. The RSpec unit and integration tests are run against master_api_key
@@ -238,7 +236,7 @@ The option -u will update all gems including master_api_key
     
 For additional help use the -h option
  
-### Testing ###
+# Testing #
 
 To explicitly test this gem, you'll need to run the following command:
 
