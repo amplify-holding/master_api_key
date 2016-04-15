@@ -9,11 +9,11 @@ RSpec.describe 'ApiKeys', type: :request do
       }
     end
 
-    it 'should return 200 with properly formatted request' do
+    it 'should return 201 with properly formatted request' do
       post '/master_api_key/api_keys', {:group => 'group_1'}, @headers
       json_object = JSON.parse response.body
 
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(201)
       expect(response.content_type).to eq 'application/json'
 
       hash_verifier = {'group' => 'group_1'}
@@ -45,7 +45,7 @@ RSpec.describe 'ApiKeys', type: :request do
 
     it 'should return 200 with properly formatted request' do
       post '/master_api_key/api_keys', {:group => 'group_1'}, @headers
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(201)
 
       json_object = JSON.parse response.body
 
@@ -71,7 +71,7 @@ RSpec.describe 'ApiKeys', type: :request do
 
     it 'should return 200 with properly formatted request' do
       post '/master_api_key/api_keys', {:group => 'group_1'}, @headers
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(201)
 
       json_object = JSON.parse response.body
       api_token = json_object['apiKey']['api_token']

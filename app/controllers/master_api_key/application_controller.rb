@@ -5,7 +5,7 @@ module MasterApiKey
     protected
 
     def respond_with_error(msg, error)
-      render :text => {:error => msg}.to_json, :content_type => 'application/json', :status => error
+      render json: {:error => msg}, status: error
     end
   end
 end

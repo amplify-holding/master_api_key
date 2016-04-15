@@ -17,7 +17,7 @@ This allows you to only give access to related controllers to a client easily.
 
 First, include the gem into your project's GemFile
 
-    $ gem 'master_api_key', ~> 1.0
+    $ gem 'master_api_key', '~> 1.0'
 
 Then, install and run the migrations
 
@@ -66,7 +66,7 @@ to giving them complete access to your API and control who accesses it.
 
 ####Endpoint####
 
-    POST /security/api_key
+    POST /security/api_keys
 
 ####Headers####
 
@@ -79,7 +79,7 @@ to giving them complete access to your API and control who accesses it.
 
 | Param Name    | Type        | Required  | Description  |
 | ------------- |------------- | --------- | --------- |
-| group      | string | no | the name of a collection of controllers to grant access. Not providing a group will grant access to all public APIs |
+| group      | string | yes | the name of a collection of controllers to grant access. Not providing a group will grant access to all public APIs |
 
 ####Responses####
 
@@ -112,7 +112,7 @@ to giving them complete access to your API and control who accesses it.
  
 ####Endpoint####
 
-    DELETE /security/api_key/:id
+    DELETE /security/api_keys/:id
     
 ####Parameters####
 
@@ -147,7 +147,7 @@ to giving them complete access to your API and control who accesses it.
 
 ####Endpoint####
 
-    DELETE /security/api_key
+    DELETE /security/api_keys
     
 ####Parameters####
 

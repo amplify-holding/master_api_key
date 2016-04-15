@@ -12,7 +12,7 @@ module MasterApiKey
         @api_key = ApiKey.create! do |api_key|
           api_key.group = group_param
         end
-        render json: { apiKey: @api_key, status: :created }
+        render json: { apiKey: @api_key}, status: :created
       rescue ActionController::ParameterMissing => e
         respond_with_error(e.message, :bad_request)
       end
