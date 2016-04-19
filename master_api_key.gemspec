@@ -7,10 +7,10 @@ Gem::Specification.new do |s|
   s.summary     = 'Secure Access of API with API Keys.'
   s.description = 'This gem gives a developer a set of tools to provide authorized access their endpoints.'
   s.authors     = ['Flynn Jones', 'Prakash Vadrevu', 'Srikanth Gurram']
-  s.email       = ['fjones@amplify.com', 'pvadrevu@amplify.com', 'sgurram@amplify.com ']
+  s.email       = ['flynn.jones@outlook.com', 'pvadrevu@amplify.com', 'sgurram@amplify.com ']
   s.files       = Dir['{lib,app,db,config}/**/*.{rb,gemversion}']
   s.test_files  = Dir['{spec}/**/*']
-  s.homepage    = 'http://rubygems.org/gems/master_api_key'
+  s.homepage    = 'https://github.com/amplify-holding/master_api_key'
   s.license     = 'MIT'
   s.add_dependency('rails', ['>= 3.0', '< 5.0'])
   s.add_development_dependency('rspec', '~> 3.4')
