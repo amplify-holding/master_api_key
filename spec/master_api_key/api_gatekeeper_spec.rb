@@ -91,4 +91,86 @@ RSpec.describe ApplicationController, :type => :controller do
       }.to raise_error(ArgumentError)
     end
   end
+
+  context 'with a controller with a additional authorizer' do
+    controller do
+      belongs_to_api_group(:allowed_group)
+      authorize_with(:additional_authorizer)
+
+      def index
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def additional_authorizer
+        false
+      end
+    end
+
+    before(:each) do
+      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
+      controller.request.headers['X-API-TOKEN'] = @api_key.api_token
+    end
+
+    it 'should fail authorization when additional authorization factor fails' do
+      expect(controller).to receive(:additional_authorizer).and_return(false)
+      expect(controller).to receive(:on_forbidden_request).and_call_original
+      expect(controller).to receive(:head).with(:forbidden)
+
+      controller.index
+    end
+
+    it 'should pass authorization when additional authorization factor succeeds' do
+      expect(controller).to receive(:additional_authorizer).and_return(true)
+      expect(controller).to receive(:head).with(:ok)
+
+      controller.index
+    end
+  end
+
+  context 'with a controller with additional authorizers' do
+    controller do
+      belongs_to_api_group(:allowed_group)
+      authorize_with([:first_authorizer, :second_authorizer])
+
+      def index
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def first_authorizer
+        false
+      end
+
+      def second_authorizer
+        false
+      end
+    end
+
+    before(:each) do
+      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
+      controller.request.headers['X-API-TOKEN'] = @api_key.api_token
+    end
+
+    it 'should fail authorization when one of the additional authorization factors fail' do
+      expect(controller).to receive(:first_authorizer).and_return(false)
+      expect(controller).to receive(:second_authorizer).and_return(true)
+
+      expect(controller).to receive(:on_forbidden_request).and_call_original
+      expect(controller).to receive(:head).with(:forbidden)
+
+      controller.index
+    end
+
+    it 'should pass authorization when both authorization factors succeed' do
+      expect(controller).to receive(:first_authorizer).and_return(true)
+      expect(controller).to receive(:second_authorizer).and_return(true)
+
+      expect(controller).to receive(:head).with(:ok)
+
+      controller.index
+    end
+  end
 end
