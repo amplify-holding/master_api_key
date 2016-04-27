@@ -1,0 +1,6 @@
+1.2.0 - Added a method to include custom authorization methods beyond just API Groups.
+        Switched dev environment from jruby to ruby since signing gems fails under that environment.
+1.1.1 - Fixed a bug where the http code for creating ApiKeys was 200 instead of 201
+1.1.0 - Added backwards compatibility to rails 3+
+1.0.0 - Initial release. Has basic authentication and authorization 
+        by API Keys with concept of API Groups as a means of authorizing authenticated users.

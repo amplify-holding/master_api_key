@@ -92,85 +92,77 @@ RSpec.describe ApplicationController, :type => :controller do
     end
   end
 
-  context 'with a controller with a additional authorizer' do
-    controller do
-      belongs_to_api_group(:allowed_group)
-      authorize_with(:additional_authorizer)
-
-      def index
-        authorize_action do
-          head(:ok)
-        end
-      end
-
-      def additional_authorizer
-        false
-      end
-    end
-
-    before(:each) do
-      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
-      controller.request.headers['X-API-TOKEN'] = @api_key.api_token
-    end
-
-    it 'should fail authorization when additional authorization factor fails' do
-      expect(controller).to receive(:additional_authorizer).and_return(false)
-      expect(controller).to receive(:on_forbidden_request).and_call_original
-      expect(controller).to receive(:head).with(:forbidden)
-
-      controller.index
-    end
-
-    it 'should pass authorization when additional authorization factor succeeds' do
-      expect(controller).to receive(:additional_authorizer).and_return(true)
-      expect(controller).to receive(:head).with(:ok)
-
-      controller.index
-    end
-  end
-
   context 'with a controller with additional authorizers' do
+    class ExtendedApiKey < MasterApiKey::ApiKey
+       def allowed_id
+         nil
+       end
+
+       def allowed_filter
+         nil
+       end
+    end
+
     controller do
       belongs_to_api_group(:allowed_group)
-      authorize_with([:first_authorizer, :second_authorizer])
+      authorize_with authorizers: [:first_authorizer, :second_authorizer], only:[:index]
 
       def index
-        authorize_action do
+        head(:ok)
+      end
+
+      def show
+        authorize_action(:first_authorizer) do
           head(:ok)
         end
       end
 
       def first_authorizer
-        false
+        @api_key.allowed_id == params.require(:id).to_i
       end
 
       def second_authorizer
-        false
+        @api_key.allowed_filter == params.require(:filter)
       end
     end
 
     before(:each) do
-      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
-      controller.request.headers['X-API-TOKEN'] = @api_key.api_token
+      @allowed_filter = 'allowed_key'
+      @valid_api_key = ExtendedApiKey.create!(:group => 'allowed_group')
+      controller.request.headers['X-API-TOKEN'] = @valid_api_key.api_token
+
+      allow(MasterApiKey::ApiKey).to receive(:find_by_api_token).with(@valid_api_key.api_token).and_return(@valid_api_key)
+      allow(@valid_api_key).to receive(:allowed_id).and_return(1)
+      allow(@valid_api_key).to receive(:allowed_filter).and_return(@allowed_filter)
     end
 
-    it 'should fail authorization when one of the additional authorization factors fail' do
-      expect(controller).to receive(:first_authorizer).and_return(false)
-      expect(controller).to receive(:second_authorizer).and_return(true)
+    context 'with two additional authorization factors' do
+      it 'should fail authorization when one of the additional authorization factors fail' do
+        get :index, :id => 1, :filter => 'not_allowed_filter'
 
-      expect(controller).to receive(:on_forbidden_request).and_call_original
-      expect(controller).to receive(:head).with(:forbidden)
+        expect(response).to have_http_status(403)
+      end
 
-      controller.index
+      it 'should pass authorization when both authorization factors succeed' do
+        get :index, :id => 1, :filter => @allowed_filter
+
+        expect(response).to have_http_status(200)
+      end
     end
 
-    it 'should pass authorization when both authorization factors succeed' do
-      expect(controller).to receive(:first_authorizer).and_return(true)
-      expect(controller).to receive(:second_authorizer).and_return(true)
+    context 'with one additional authorization factor' do
+      it 'should pass authorization when additional authorization factor succeeds' do
+        get :show, :id => 1
 
-      expect(controller).to receive(:head).with(:ok)
+        expect(response).to have_http_status(200)
+      end
 
-      controller.index
+      it 'should fail authorization when additional authorization factor fails' do
+
+        get :show, :id => 2
+
+        expect(response).to have_http_status(403)
+      end
     end
   end
 end

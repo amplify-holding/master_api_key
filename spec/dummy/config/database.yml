@@ -1,5 +1,5 @@
 base: &base
-  adapter: mysql
+  adapter: mysql2
   encoding: utf8
   host: <%= 'localhost' %>
   username: <%= 'root' %>

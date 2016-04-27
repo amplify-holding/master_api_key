@@ -11,17 +11,13 @@ module MasterApiKey
         self.module_eval("def api_group() :#{group_name} end")
       end
 
-      def authorize_with(authorizers, filters = nil)
-        raise ArgumentError, "Didn't define authorizers with method" unless authorizers.present?
+      def authorize_with(options)
+        before_filter(options) do
+          authorizers = options[:authorizers]
+          raise ArgumentError, "Didn't define authorizers with method" unless authorizers.present?
 
-        method_definitions = authorizers.respond_to?(:inject) ? authorizers : [authorizers]
-
-        self.module_eval(
-            "def passes_authorizers?()
-            #{method_definitions}.inject(true) do |authorized, authorizer|
-                authorized &= self.send(authorizer)
-              end
-            end")
+          authorize_action(authorizers)
+        end
       end
     end
 
@@ -29,16 +25,20 @@ module MasterApiKey
       nil
     end
 
-    def passes_authorizers?
-      true
-    end
-
     protected
 
-    def authorize_action
+    def passes_authorizers?(authorizers)
+      method_definitions = authorizers.respond_to?(:inject) ? authorizers : [authorizers]
+      method_definitions.inject(true) do |authorized, authorizer|
+        authorized &= self.send(authorizer)
+      end
+    end
+
+    def authorize_action(authorizers = nil)
       if user_authenticated?
         raise ArgumentError, "MasterApiKey: Didn't define an api group name" unless self.api_group.present?
-        if is_authorized?
+
+        if authorized_with_group? and (authorizers.nil? or passes_authorizers?(authorizers))
           yield if block_given?
         else
           on_forbidden_request
@@ -58,16 +58,16 @@ module MasterApiKey
 
     private
 
-    def is_authorized?
-      authorized_with_group? and passes_authorizers?
-    end
-
     def authorized_with_group?
       @api_key.group.casecmp(self.api_group.to_s) == 0
     end
 
     def user_authenticated?
-     api_token.present? and (@api_key = MasterApiKey::ApiKey.find_by_api_token(api_token)).present?
+      api_token.present? and user_api_key.present?
+    end
+
+    def user_api_key
+      @api_key.present? ? @api_key : (@api_key = MasterApiKey::ApiKey.find_by_api_token(api_token))
     end
 
     def api_token

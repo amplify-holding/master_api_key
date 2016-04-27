@@ -192,22 +192,47 @@ If the access token was authenticated but was not authorized to use the endpoint
 
 ### Integrating Master Api Key into your Controllers ###
 
-The core module of this project is "MasterApiKey::ApiGatekeeper", which has the logic to validate the Api Tokens used to call the APIs.
-The method to restrict access is by either adding a filter to the top of the controller or explicitly
-calling the method to restrict access.
+The core module of this project is "MasterApiKey::ApiGatekeeper", which is automatically mixed into all controllers.
+For each controller, you'll need to assign it a group at the top of the controller. Below is an example of 
+assigning controller to API Groups.
 
 ```ruby
-#Restricting access by filters
-before_action :authorize_action, only: [:create]
+class AdminController < ApplicationController
 
-#Restricting access by explicitly calling method.
-#If the call is authorized then the code block passed in will be executed.
-def index
-    authorize_action do
-        head :ok
-    end
-end
+    #define the group that the controller is apart of. 
+    #Only ApiKeys with this name in the group column will have access to the controller.
+    belongs_to_api_group :admin
+
 ```
+
+Now that you've defined the group, you'll need to restrict access is by either 
+adding a filter to the top of the controller or explicitly calling the method to restrict access.
+
+```ruby
+class AdminController < ApplicationController
+
+    #define the group that the controller is apart of. 
+    #Only ApiKeys with this name in the group column will have access to the controller.
+    belongs_to_api_group :admin
+
+    #Restricting access by filters
+    before_action :authorize_action, only: [:create]
+    
+    def create
+        #Code for creating admins.
+        head :created
+    end
+
+    #Restricting access by explicitly calling method.
+    #If the call is authorized then the code block passed in will be executed.
+    def index
+        authorize_action do
+            #Code for accessing admins
+            head :ok
+        end
+    end
+```
+
 If you want to override the default behavior when a request is considered 
 not authenticated or unauthorized, you can override the following methods from ApiGateKeeper 
 in your calling controller.
@@ -222,6 +247,61 @@ in your calling controller.
     def on_forbidden_request
       head(:forbidden)
     end
+```
+
+### Extending Authorization beyond API Groups ###
+Adding additional ways to authorize users is easy with the MasterApiKey gem. The main tasks you'll need
+to do is the following:
+* Add a new column to the ApiKey table representing the new authorization factor.
+* Implement new authorization methods in the necessary controllers.
+* Assign required authorization methods to the nessesary controller endpoints.
+
+Below is an example of an AdminController using the multi authorization factor feature. The ApiKey model
+now has two new columns added to it, the company and level column. An endpoint user will have the ability to
+create new users if the new user has the same company as the ApiKey being used, and if the user has 
+level acces that is equal to or less than the level of the ApiKey being used.
+
+```ruby
+class AdminController < ApplicationController 
+    #define the group that the controller is apart of. 
+    #Only ApiKeys with this group will have access to the controller.
+    belongs_to_api_group :admin
+    
+    #Restricting access by filters. You can pass in a single authorizer or an array of authorizers.
+    authorize_with authorizers:[:company_authorizer, level_authorizer], only: [:create]
+
+    #Will execute if company_authorizer and level_authorizer passes.
+    def create
+        @user = User.create!(company_access: company_param, level_authorizer: level_param)
+        render json: { record: @user}, status: :created
+    end
+
+    #Restricting access by explicitly calling method. You can pass in a single authorizers
+    #or an array of authorizers. In this case the code block will execute if company_authorizer passes.
+    def index
+        authorize_action(:company_authorizer) do
+            respond_with User.find_by(company_access: company_param, level_authorizer: level_param)
+        end
+    end
+
+    def company_authorizer
+        @api_key.company_access == company_param
+    end
+
+    def level_authorizer
+        @api_key.level_required >= level_param
+    end
+
+    private 
+    
+    def company_param
+        params.require(:company)
+    end
+    
+    def level_param
+        params.require(:level).to_i
+    end
+end
 ```
 
 # Building the Gem #
