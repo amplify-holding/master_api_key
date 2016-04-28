@@ -170,7 +170,7 @@ to giving them complete access to your API and control who accesses it.
 ```
 ## Restricting Access to your APIs ##
 ### Clients using your APIs ###
-When retricting access to your APIs, a new header field in your http request will be required.
+When restricting access to your APIs, a new header field in your http request will be required.
 The header key/value is:
 
     X-API-TOKEN: <api_token>
@@ -254,12 +254,12 @@ Adding additional ways to authorize users is easy with the MasterApiKey gem. The
 to do is the following:
 * Add a new column to the ApiKey table representing the new authorization factor.
 * Implement new authorization methods in the necessary controllers.
-* Assign required authorization methods to the nessesary controller endpoints.
+* Assign required authorization methods to the necessary controller endpoints.
 
 Below is an example of an AdminController using the multi authorization factor feature. The ApiKey model
 now has two new columns added to it, the company and level column. An endpoint user will have the ability to
 create new users if the new user has the same company as the ApiKey being used, and if the user has 
-level acces that is equal to or less than the level of the ApiKey being used.
+level access that is equal to or less than the level of the ApiKey being used.
 
 ```ruby
 class AdminController < ApplicationController 
@@ -268,7 +268,7 @@ class AdminController < ApplicationController
     belongs_to_api_group :admin
     
     #Restricting access by filters. You can pass in a single authorizer or an array of authorizers.
-    authorize_with authorizers:[:company_authorizer, level_authorizer], only: [:create]
+    authorize_with authorizers:[:company_authorizer, :level_authorizer], only: [:create]
 
     #Will execute if company_authorizer and level_authorizer passes.
     def create
@@ -306,7 +306,7 @@ end
 
 # Building the Gem #
 Use the build gem script if you want a simple way to setup your workstation for development.
-The script goes through several steps before verifting the build.
+The script goes through several steps before verifying the build.
 1. The RSpec unit and integration tests are run against master_api_key
 2. The gem is built and installed in the current ruby environment
 
