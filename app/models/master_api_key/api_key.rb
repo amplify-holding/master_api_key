@@ -4,7 +4,7 @@ module MasterApiKey
     before_create :generate_api_token
 
     def as_json(options = {})
-      super(options.reverse_merge({only: [:id, :api_token, :group]}))
+      super(options.reverse_merge({only: [:id, :api_token, :group, :read_access, :write_access]}))
     end
 
     private

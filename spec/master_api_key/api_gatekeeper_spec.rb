@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'master_api_key/api_gatekeeper'
+require 'support/access_shared_examples'
 
 RSpec.describe ApplicationController, :type => :controller do
   context 'with fully configured controller' do
@@ -11,61 +12,164 @@ RSpec.describe ApplicationController, :type => :controller do
           head(:ok)
         end
       end
+
+      def show
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def create
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def destroy
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def edit
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def new
+        authorize_action do
+          head(:ok)
+        end
+      end
+
+      def update
+        authorize_action do
+          head(:ok)
+        end
+      end
     end
 
     before(:each) do
+
     end
 
     context 'Without API TOKEN' do
       it "should return 401 (:unauthorized) if 'X-API-TOKEN' isn't available" do
-        expect(controller).to receive(:on_authentication_failure)
+        expect(controller).to receive(:on_authentication_failure).and_call_original
 
-        controller.index
-      end
+        get :index
 
-      it 'should render a response as unauthorized by default' do
-        expect(controller).to receive(:head).with(:unauthorized)
-
-        controller.index
+        expect(response).to have_http_status(401)
       end
     end
 
     context 'With API Token' do
       before(:each) do
-        @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
+        @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group', :read_access => true)
         controller.request.headers['X-API-TOKEN'] = @api_key.api_token
       end
 
       it "should return 401 (:unauthorized) if the token can't be authenticated" do
         controller.request.headers['X-API-TOKEN'] = @api_key.api_token + '_missing'
 
-        expect(controller).to receive(:on_authentication_failure)
+        expect(controller).to receive(:on_authentication_failure).and_call_original
 
-        controller.index
+        get :index
+
+        expect(response).to have_http_status(401)
       end
 
       it "should return 403 (:forbidden) if the api token isn't authorized to access the group" do
-        restricted_api_key = MasterApiKey::ApiKey.create!(:group => 'not_allowed_group')
+        restricted_api_key = MasterApiKey::ApiKey.create!(:group => 'not_allowed_group', :read_access => true)
         controller.request.headers['X-API-TOKEN'] = restricted_api_key.api_token
 
         expect(controller).to receive(:on_forbidden_request).and_call_original
-        expect(controller).to receive(:head).with(:forbidden)
 
-        controller.index
+        get :index
+
+        expect(response).to have_http_status(403)
       end
 
       it 'should return 200 if the token is authenticated and authorized to access the controller' do
-        expect(controller).to receive(:head).with(:ok)
+        get :index
 
-        controller.index
+        expect(response).to have_http_status(200)
       end
 
       it 'should return 200 even if the group is defined with a different character case' do
-        upper_case_api_key = MasterApiKey::ApiKey.create!(:group => 'ALLOWED_GROUP')
+        upper_case_api_key = MasterApiKey::ApiKey.create!(:group => 'ALLOWED_GROUP', :read_access => true)
         controller.request.headers['X-API-TOKEN'] = upper_case_api_key.api_token
-        expect(controller).to receive(:head).with(:ok)
 
-        controller.index
+        get :index
+
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'with access rights' do
+      context 'for index' do
+        before(:each) do
+          @action = lambda { get :index }
+        end
+
+        include_examples :read_access_rights, :allowed_group, :ok
+      end
+
+      context 'for show' do
+        before(:each) do
+          @action = lambda { get :show, :id => 1 }
+        end
+
+        include_examples :read_access_rights, :allowed_group, :ok
+      end
+
+      context 'for create' do
+        before(:each) do
+          @action = lambda { post :create}
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
+      end
+
+      context 'for destroy' do
+        before(:each) do
+          @action = lambda { delete :destroy, :id => 1 }
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
+      end
+
+      context 'for new' do
+        before(:each) do
+          @action = lambda { get :new, :id => 1}
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
+      end
+
+      context 'for edit' do
+        before(:each) do
+          @action = lambda { post :edit, :id => 1 }
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
+      end
+
+      context 'for put' do
+        before(:each) do
+          @action = lambda { put :update, :id => 1 }
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
+      end
+
+      context 'for patch' do
+        before(:each) do
+          @action = lambda { patch :update, :id => 1 }
+        end
+
+        include_examples :write_access_rights, :allowed_group, :ok
       end
     end
   end
@@ -81,13 +185,13 @@ RSpec.describe ApplicationController, :type => :controller do
     end
 
     before(:each) do
-      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group')
+      @api_key = MasterApiKey::ApiKey.create!(:group => 'allowed_group', :read_access => true)
       controller.request.headers['X-API-TOKEN'] = @api_key.api_token
     end
 
     it 'should throw exception because the controller is not in a group but is using api authentication' do
       expect{
-        controller.index
+        get :index
       }.to raise_error(ArgumentError)
     end
   end
@@ -128,7 +232,7 @@ RSpec.describe ApplicationController, :type => :controller do
 
     before(:each) do
       @allowed_filter = 'allowed_key'
-      @valid_api_key = ExtendedApiKey.create!(:group => 'allowed_group')
+      @valid_api_key = ExtendedApiKey.create!(:group => 'allowed_group', :read_access => true)
       controller.request.headers['X-API-TOKEN'] = @valid_api_key.api_token
 
       allow(MasterApiKey::ApiKey).to receive(:find_by_api_token).with(@valid_api_key.api_token).and_return(@valid_api_key)

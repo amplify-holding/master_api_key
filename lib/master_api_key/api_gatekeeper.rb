@@ -29,8 +29,11 @@ module MasterApiKey
 
     def passes_authorizers?(authorizers)
       method_definitions = authorizers.respond_to?(:inject) ? authorizers : [authorizers]
-      method_definitions.inject(true) do |authorized, authorizer|
-        authorized &= self.send(authorizer)
+      method_definitions.inject(true) do |is_authorized, authorizer|
+        was_authorized = is_authorized
+        is_authorized &= self.send(authorizer)
+        log_failed_authorization(authorizer, is_authorized, was_authorized)
+        is_authorized
       end
     end
 
@@ -56,10 +59,28 @@ module MasterApiKey
       head(:forbidden)
     end
 
+    protected
+
+    def write_authorizer
+      @api_key.write_access
+    end
+
+    def read_authorizer
+      @api_key.read_access
+    end
+
     private
 
+    def log_failed_authorization(authorizer, is_authorized, was_authorized)
+      unless was_authorized == is_authorized
+        Rails.logger.info "#{authorizer} failed for user of api token #{@api_key.api_token}"
+      end
+    end
+
     def authorized_with_group?
-      @api_key.group.casecmp(self.api_group.to_s) == 0
+      is_authorized = @api_key.group.casecmp(self.api_group.to_s) == 0
+      log_failed_authorization(:authorized_with_group?, is_authorized, true)
+      is_authorized
     end
 
     def user_authenticated?

@@ -8,5 +8,7 @@
 unless MasterApiKey::ApiKey.where(:group => :master_key).count > 0
   MasterApiKey::ApiKey.create do |master_key|
     master_key.group = :master_key
+    master_key.read_access = true
+    master_key.write_access = true
   end
 end
