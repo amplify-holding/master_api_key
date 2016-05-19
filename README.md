@@ -5,35 +5,48 @@ This gem will provide an API to create API Keys and revoke API access.
 
 ##API Groups##
 
-In addition, it provides basic authorization with controller groups. With controller groups,
+The Master ApiKey Gem provides basic authorization with controller groups. With controller groups,
 you can separate your APIs into logical packages or products. 
 
 For example, you can have an AdminController and UserController under the "users" group or
 a MapsControllers, LocationsController, TrafficController under the "maps" group. 
 This allows you to only give access to related controllers to a client easily.
 
+##Read/Write Controller Protection##
+
+All controllers automatically get read/write protection based off of the ApiKey being used. 
+ApiKeys have read_access and write_access boolean fields that grant authorization to different 
+controller actions. Read access grants the user authorization to use the index and show actions.
+While write access grants the user authorization to use the create, new, update, destroy, and edit actions.
+
+
 # Using Master Api Key #
 ## Setup ##
 
 First, include the gem into your project's GemFile
 
-    $ gem 'master_api_key', '~> 1.0'
+```ruby
+gem 'master_api_key', '~> 1.0'
+```
 
 Then, install and run the migrations
 
-    $ rake master_api_key:install:migrations
-    $ rake db:migrate
+```bash
+$ rake master_api_key:install:migrations
+$ rake db:migrate
+```
     
 Next, add the following line to the seed file for integrating MasterApiKey seed data.
 ```ruby
-     MasterApiKey::Engine.load_seed
+MasterApiKey::Engine.load_seed
 ``` 
     
 Finally, setup the MasterApiKey Engine routes. 
 * Go to the routes.rb file in your application
 * Add the following line.
+
 ```ruby
-    mount MasterApiKey::Engine => '/security'
+mount MasterApiKey::Engine => '/security'
 ``` 
 
 You can replace the mounted path from 'security' to any sub path you'd like. In addition, running a db
@@ -46,7 +59,7 @@ For more info on rails engines, please go to the following link:
 To use this gem with rails 3, you'll need the strong parameters gem. 
 
 ```ruby
-    gem 'strong_parameters'
+gem 'strong_parameters'
 ```
 
 ## Managing the API Keys ##
@@ -60,16 +73,57 @@ IMPORTANT: Do not reuse this api key for other controllers and no not share this
 users. This key will grant its users the ability to generate any api key they want, which is equivalent 
 to giving them complete access to your API and control who accesses it.
 
-For a details description of the protocol, read the [PROTOCOL.md file](docs/PROTOCOL.md)
+For a detailed description of the protocol, read the [PROTOCOL.md](docs/PROTOCOL.md) file
+
+##Using the API##
+In order to use the api, you'll need to know your service's domain and a master api token for authentication.
+If you are running the rails app locally with the default settings and mounted the engine to the '/security' path, 
+then your service domain for the master_api_key engine will be 
+    
+    http://localhost:3000/security
+
+Finally, you'll need a master api token with read write access to use the api. A key should have been generated for 
+you when you installed the engine. It will be an ApiKey record with a group name 'master_key'. If one does not exist
+then you can create a new record by doing the following in the rails console.
+
+```bash
+$ rails c
+$ MasterApiKey::ApiKey.create(group:'master_key', read_access:true, write_access:true) 
+```
+
+Now that you have an access token and the service domain, you can now use the following API endpoints.
 
 ##Granting API Access###
-Ipsum Lorem
+This is an example of creating a new 'administration' api key that has read access but not write access.
+
+```bash
+$ curl -v -X POST <service_domain>/api_keys \
+    -H "X-API-TOKEN: <master_key_api_token>" \
+    -H "Content-Type: application/json" \
+    --data '{"group":"administration","authorizations":{"read_access":true,"write_access":false}}'   
+```
 
 ###Changing Read/Write Access to API###
-Ipsum Lorem
+This is an example of updating an existing api key to have both read and write access.
+You will need to replace <api_key_token_to_modify> with the api token of the target api key record.
+
+```bash
+$ curl -v -X PATCH <service_domain>/api_keys \
+    -H "X-API-TOKEN: <master_key_api_token>" \
+    -H "Content-Type: application/json" \
+    --data '{"api_token":"<api_key_token_to_modify>","authorizations":{"read_access":true,"write_access":true}}'
+```
 
 ###Revoking API Access###
-Ipsum Lorem
+This is an example of deleting an existing api key to have both read and write access.
+You will need to replace <api_key_token_to_delete> with the api token of the api key to delete.
+
+```bash
+$ curl -v -X DELETE <service_domain>/security/api_keys \
+    -H "X-API-TOKEN: <master_key_api_token>" \
+    -H "Content-Type: application/json" \
+    --data '{"api_token":"<api_key_token_to_delete>"}' 
+```
 
 ## Restricting Access to your APIs ##
 ### Clients using your APIs ###
@@ -105,7 +159,6 @@ class AdminController < ApplicationController
     #define the group that the controller is apart of. 
     #Only ApiKeys with this name in the group column will have access to the controller.
     belongs_to_api_group :admin
-
 ```
 
 Now that you've defined the group, you'll need to restrict access is by either 
@@ -217,12 +270,16 @@ Once all tests are green, then it should be safe to push the gem to the reposito
 
 The basic usage for the build script is the following:
 
-    $ ./build_gem.sh
+```bash
+./build_gem.sh
+```
 
 During development you will need to update the gems, especially when you update the version file.
 The option -u will update all gems including master_api_key
 
-    $ ./build_gem.sh -u
+```bash
+./build_gem.sh -u
+```
     
 For additional help use the -h option
  
@@ -230,5 +287,7 @@ For additional help use the -h option
 
 To explicitly test this gem, you'll need to run the following command:
 
-    $ rake test
-     
+```bash
+rake test
+```
+    
