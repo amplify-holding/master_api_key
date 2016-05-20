@@ -1,7 +1,10 @@
-1.3.0 - Added Read/Write protection for controllers. Read: index/show, Write: create/destroy/new/edit
+2.0.0 - Added Read/Write protection for controllers. Read: index/show, Write: create/destroy/new/edit
         Be mindful that running migrations will make all existing api keys read/write accessible.
+        You'll need to install and run migrations using rake master_api_key:install:migrations then rake db:migrate
         Additional logging for when users are forbidden from accessing an endpoint.
         Ensured all json responses are consistent and use snake case formatting.
+        Only supporting Rails 4+ because Rails 3 lacks support of patch verb.
+        Those using Rails 4+ shouldn't have to worry about migration issues.
 1.2.0 - Added a method to include custom authorization methods beyond just API Groups.
         Switched dev environment from jruby to ruby since signing gems fails under that environment.
 1.1.1 - Fixed a bug where the http code for creating ApiKeys was 200 instead of 201

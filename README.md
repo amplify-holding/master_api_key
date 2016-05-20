@@ -26,7 +26,7 @@ While write access grants the user authorization to use the create, new, update,
 First, include the gem into your project's GemFile
 
 ```ruby
-gem 'master_api_key', '~> 1.0'
+gem 'master_api_key', '~> 2.0'
 ```
 
 Then, install and run the migrations
@@ -54,13 +54,6 @@ migration should automatically generate a master_key APIKey for you.
 
 For more info on rails engines, please go to the following link:
 [Rails Engine Tutorial](http://guides.rubyonrails.org/engines.html)
-
-### Rails 3 Integration ###
-To use this gem with rails 3, you'll need the strong parameters gem. 
-
-```ruby
-gem 'strong_parameters'
-```
 
 ## Managing the API Keys ##
 Here we'll show you how to create, update, and revoke api keys from clients. 
