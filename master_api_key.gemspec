@@ -3,7 +3,7 @@ require File.expand_path('../lib/master_api_key/version', __FILE__)
 Gem::Specification.new do |s|
   s.name        = 'master_api_key'
   s.version     = MasterApiKey::VERSION
-  s.date        = '2016-05-20'
+  s.date        = Time.now.strftime('%Y-%m-%d')
   s.summary     = 'Secure Access of API with API Keys.'
   s.description = 'This gem gives a developer a set of tools for securing access to their endpoints.'
   s.authors     = ['Flynn Jones', 'Prakash Vadrevu', 'Srikanth Gurram']
